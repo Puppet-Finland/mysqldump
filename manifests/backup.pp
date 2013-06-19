@@ -28,11 +28,11 @@
 #   works for MyISAM tables. For InnoDB tables --single-transaction is more 
 #   appropriate.
 # [*hour*]
-#   Hour(s) when the agent gets run. Defaults to * (all hours).
+#   Hour(s) when mysqldump gets run. Defaults to 01.
 # [*minute*]
-#   Minute(s) when the agent gets run. Defaults to 50.
+#   Minute(s) when mysqldump gets run. Defaults to 10.
 # [*weekday*]
-#   Weekday(s) when the agent gets run. Defaults to * (all weekdays).
+#   Weekday(s) when mysqldump gets run. Defaults to * (all weekdays).
 #
 # == Examples
 #
@@ -51,8 +51,8 @@ define mysqldump::backup
     $mysql_user = 'root',
     $mysql_passwd,
     $mysqldump_extra_params = '--lock-tables',
-    $hour = '4',
-    $minute = '15',
+    $hour = '01',
+    $minute = '10',
     $weekday = '*',
 )
 {
