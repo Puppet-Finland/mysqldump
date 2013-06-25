@@ -15,8 +15,8 @@
 #   Status of the backup job. Either 'present' or 'absent'. Defaults to 
 #   'present'.
 # [*databases*]
-#   Space-separated list of databases to back up. Defaults to 'all', which 
-#   is a special parameter to dump all databases.
+#   An array containing the names of databases to back up. Defaults to ['all'],
+#   which backs up all databases.
 # [*output_dir*]
 #   The directory where to output the files. Defaults to /var/backups/local.
 # [*mysql_user*]
@@ -39,14 +39,14 @@
 # mysqldump::backup { 'trac_database':
 #   mysql_user => 'trac',
 #   mysql_passwd => 'dummy',
-#   databases => 'trac',
+#   databases => ['trac'],
 #   mysqldump_extra_params => '--single-transaction',
 # }
 #
 define mysqldump::backup
 (
     $status = 'present',
-    $databases = 'all',
+    $databases = ['all'],
     $output_dir = '/var/backups/local',
     $mysql_user = 'root',
     $mysql_passwd,
@@ -59,13 +59,17 @@ define mysqldump::backup
 
     include mysqldump
 
-    if $databases == 'all' {
-        $cron_command = "mysqldump -u${mysql_user} -p${mysql_password} --routines --all-databases ${mysqldump_extra_params}|gzip > ${output_dir}/all_databases.sql.gz"
+    # Get string representations of the database array
+    $databases_string = join($databases, ' ')
+    $databases_identifier = join($databases, '_and_')
+
+    if $databases_string == 'all' {
+        $cron_command = "mysqldump -u${mysql_user} -p${mysql_passwd} --routines --all-databases ${mysqldump_extra_params}|gzip > \"${output_dir}/latest_full_backup_of_all_databases.sql.gz\""
     } else {
-        $cron_command = "mysqldump -u${mysql_user} -p${mysql_password} --routines --databases ${databases} ${mysqldump_extra_params}|gzip > ${output_dir}/databases.sql.gz"
+        $cron_command = "mysqldump -u${mysql_user} -p${mysql_passwd} --routines --databases ${databases_string} ${mysqldump_extra_params}|gzip > \"${output_dir}/latest_full_backup_of_${databases_identifier}.sql.gz\""
     }
 
-    cron { "mysql-backup-${databases}-cron":
+    cron { "mysqldump-backup-${databases_identifier}-cron":
         ensure => $status,
         command => $cron_command,
         user => root,
