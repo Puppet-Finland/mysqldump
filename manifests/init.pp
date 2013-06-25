@@ -6,6 +6,10 @@
 # mysql class allows management of mysqldump backups, while keeping mysql 
 # management separate.
 #
+# This module requires puppet stdlib:
+#
+# <https://forge.puppetlabs.com/puppetlabs/stdlib>
+#
 # == Parameters
 #
 # None at the moment
