@@ -33,6 +33,9 @@
 #   Minute(s) when mysqldump gets run. Defaults to 10.
 # [*weekday*]
 #   Weekday(s) when mysqldump gets run. Defaults to * (all weekdays).
+# [*email*]
+#   Email address where notifications are sent. Defaults to top-scope variable
+#   $::servermonitor.
 #
 # == Examples
 #
@@ -54,6 +57,7 @@ define mysqldump::backup
     $hour = '01',
     $minute = '10',
     $weekday = '*',
+    $email = $::servermonitor
 )
 {
 
@@ -77,5 +81,6 @@ define mysqldump::backup
         minute => $minute,
         weekday => $weekday,
         require => Class['localbackups'],
+        environment => "MAILTO=${email}",
     }
 }
