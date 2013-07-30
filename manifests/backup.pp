@@ -68,9 +68,9 @@ define mysqldump::backup
     $databases_identifier = join($databases, '_and_')
 
     if $databases_string == 'all' {
-        $cron_command = "mysqldump -u${mysql_user} -p${mysql_passwd} --routines --all-databases ${mysqldump_extra_params}|gzip > \"${output_dir}/all-databases-full.sql.gz\""
+        $cron_command = "mysqldump -u${mysql_user} -p\"${mysql_passwd}\" --routines --all-databases ${mysqldump_extra_params}|gzip > \"${output_dir}/all-databases-full.sql.gz\""
     } else {
-        $cron_command = "mysqldump -u${mysql_user} -p${mysql_passwd} --routines --databases ${databases_string} ${mysqldump_extra_params}|gzip > \"${output_dir}/${databases_identifier}-full.sql.gz\""
+        $cron_command = "mysqldump -u${mysql_user} -p\"${mysql_passwd}\" --routines --databases ${databases_string} ${mysqldump_extra_params}|gzip > \"${output_dir}/${databases_identifier}-full.sql.gz\""
     }
 
     cron { "mysqldump-backup-${databases_identifier}-cron":
