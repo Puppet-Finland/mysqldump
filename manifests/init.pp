@@ -31,7 +31,7 @@
 class mysqldump {
 
 # Rationale for this is explained in init.pp of the sshd module
-if hiera('manage_mysqldump') != 'false' {
+if hiera('manage_mysqldump', 'true') != 'false' {
 
     # This class does nothing at the moment.
 }
