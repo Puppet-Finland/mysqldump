@@ -30,6 +30,9 @@
 #
 class mysqldump {
 
-    # This class does nothing at the moment.
+# Rationale for this is explained in init.pp of the sshd module
+if hiera('manage_mysqldump') != 'false' {
 
+    # This class does nothing at the moment.
+}
 }
