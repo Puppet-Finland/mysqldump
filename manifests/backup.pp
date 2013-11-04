@@ -81,6 +81,6 @@ define mysqldump::backup
         minute => $minute,
         weekday => $weekday,
         require => Class['localbackups'],
-        environment => "MAILTO=${email}",
+        environment => [ 'PATH=/bin:/usr/bin:/usr/local/bin', "MAILTO=${email}" ],
     }
 }
