@@ -39,12 +39,12 @@
 #
 # == Examples
 #
-# mysqldump::backup { 'trac_database':
-#   mysql_user => 'trac',
-#   mysql_passwd => 'dummy',
-#   databases => ['trac'],
-#   mysqldump_extra_params => '--single-transaction',
-# }
+#   mysqldump::backup { 'trac_database':
+#       mysql_user => 'trac',
+#       mysql_passwd => 'dummy',
+#       databases => ['trac'],
+#       mysqldump_extra_params => '--single-transaction',
+#   }
 #
 define mysqldump::backup
 (

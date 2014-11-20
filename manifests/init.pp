@@ -16,17 +16,17 @@
 #
 # == Examples
 #
-# include mysqldump
+#    include mysqldump
 #
 # == Authors
 #
 # Samuli Seppänen <samuli@openvpn.net>
+#
 # Samuli Seppänen <samuli.seppanen@gmail.com>
 #
 # == License
 #
-# BSD-lisence
-# See file LICENSE for details
+# BSD-license. See file LICENSE for details.
 #
 class mysqldump {
 
