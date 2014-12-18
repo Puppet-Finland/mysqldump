@@ -1,18 +1,24 @@
 #
 # == Class: mysqldump
 #
-# Class to setup and configure mysqldump. Currently only exists so that 
-# mysqldump::backup defines can be created. Separation of this class from the 
-# mysql class allows management of mysqldump backups, while keeping mysql 
-# management separate.
+# Class for setting up mysqldump and optionally configuring cronjobs that back 
+# up database using it.
 #
-# This module requires puppet stdlib:
+# This class is separated from the mysql class for two reasons:
+#
+# - In some environments managing backups using Puppet is desirable, but 
+#   managing mysql configuration using Puppet is not an option.
+# - The presence of mysqldump does not necessarily mean that there's a mysql 
+#   server on the same host.
+#
+# Note that this module requires puppet stdlib:
 #
 # <https://forge.puppetlabs.com/puppetlabs/stdlib>
 #
 # == Parameters
 #
-# None at the moment
+# [*backups*]
+#   A hash of mysql::backup resources to realize.
 #
 # == Examples
 #
@@ -28,11 +34,17 @@
 #
 # BSD-license. See file LICENSE for details.
 #
-class mysqldump {
+class mysqldump
+(
+    $backups = {}
+)
+{
 
 # Rationale for this is explained in init.pp of the sshd module
 if hiera('manage_mysqldump', 'true') != 'false' {
 
-    # This class does nothing at the moment.
+    # Realize the defined backup jobs
+    create_resources('mysqldump::backup', $backups)
+
 }
 }
