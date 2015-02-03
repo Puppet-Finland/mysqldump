@@ -23,6 +23,14 @@
 #   MySQL user with rights to dump the specified databases. Defaults to 'root'.
 # [*mysql_passwd*]
 #   Password for the above user.
+# [*use_root_defaults*]
+#   Defines whether to load /root/.my.cnf or not. This is intended to help 
+#   prevent mysql passwords from leaking out in cron's emails if mysqldump 
+#   errors out for whatever reason. Set this parameter to 'yes' to use this 
+#   feature and make sure that /root/.my.cnf exists on the target nodes (e.g. by 
+#   including the mysql::config::rootopts class). The default value is 'no', 
+#   which means that the $mysql_user and $mysql_passwd will be used for 
+#   authentication.
 # [*mysqldump_extra_params*]
 #   Extra parameters to pass to mysqldump. Defaults to --lock-tables, which 
 #   works for MyISAM tables. For InnoDB tables --single-transaction is more 
@@ -52,7 +60,8 @@ define mysqldump::backup
     $databases = ['all'],
     $output_dir = '/var/backups/local',
     $mysql_user = 'root',
-    $mysql_passwd,
+    $mysql_passwd = '',
+    $use_root_defaults = 'no',
     $mysqldump_extra_params = '--lock-tables',
     $hour = '01',
     $minute = '10',
@@ -60,17 +69,22 @@ define mysqldump::backup
     $email = $::servermonitor
 )
 {
-
     include mysqldump
 
     # Get string representations of the database array
     $databases_string = join($databases, ' ')
     $databases_identifier = join($databases, '_and_')
 
-    if $databases_string == 'all' {
-        $cron_command = "mysqldump -u${mysql_user} -p\"${mysql_passwd}\" --routines --all-databases ${mysqldump_extra_params}|gzip > \"${output_dir}/all-databases-full.sql.gz\""
+    if $use_root_defaults == 'yes' {
+        $auth_string = "--defaults-extra-file=/root/.my.cnf"
     } else {
-        $cron_command = "mysqldump -u${mysql_user} -p\"${mysql_passwd}\" --routines --databases ${databases_string} ${mysqldump_extra_params}|gzip > \"${output_dir}/${databases_identifier}-full.sql.gz\""
+        $auth_string = "-u${mysql_user} -p\"${mysql_passwd}\""
+    }
+
+    if $databases_string == 'all' {
+        $cron_command = "mysqldump $auth_string --routines --all-databases ${mysqldump_extra_params}|gzip > \"${output_dir}/all-databases-full.sql.gz\""
+    } else {
+        $cron_command = "mysqldump $auth_string --routines --databases ${databases_string} ${mysqldump_extra_params}|gzip > \"${output_dir}/${databases_identifier}-full.sql.gz\""
     }
 
     cron { "mysqldump-backup-${databases_identifier}-cron":
