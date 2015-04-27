@@ -11,7 +11,7 @@
 #
 # == Parameters
 #
-# [*status*]
+# [*ensure*]
 #   Status of the backup job. Either 'present' or 'absent'. Defaults to 
 #   'present'.
 # [*databases*]
@@ -56,11 +56,11 @@
 #
 define mysqldump::backup
 (
-    $status = 'present',
+    $ensure = 'present',
     $databases = ['all'],
     $output_dir = '/var/backups/local',
     $mysql_user = 'root',
-    $mysql_passwd = '',
+    $mysql_passwd = undef,
     $use_root_defaults = 'no',
     $mysqldump_extra_params = '--lock-tables',
     $hour = '01',
@@ -69,14 +69,15 @@ define mysqldump::backup
     $email = $::servermonitor
 )
 {
-    include mysqldump
+    include ::mysqldump
+    include ::mysqldump::params
 
     # Get string representations of the database array
     $databases_string = join($databases, ' ')
     $databases_identifier = join($databases, '_and_')
 
     if $use_root_defaults == 'yes' {
-        $auth_string = "--defaults-extra-file=/root/.my.cnf"
+        $auth_string = '--defaults-extra-file=/root/.my.cnf'
     } else {
         $auth_string = "-u${mysql_user} -p\"${mysql_passwd}\""
     }
@@ -88,13 +89,13 @@ define mysqldump::backup
     }
 
     cron { "mysqldump-backup-${databases_identifier}-cron":
-        ensure => $status,
-        command => $cron_command,
-        user => root,
-        hour => $hour,
-        minute => $minute,
-        weekday => $weekday,
-        require => Class['localbackups'],
+        ensure      => $ensure,
+        command     => $cron_command,
+        user        => $::os::params::adminuser,
+        hour        => $hour,
+        minute      => $minute,
+        weekday     => $weekday,
+        require     => Class['localbackups'],
         environment => [ 'PATH=/bin:/usr/bin:/usr/local/bin', "MAILTO=${email}" ],
     }
 }

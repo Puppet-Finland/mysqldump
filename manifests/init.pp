@@ -17,6 +17,9 @@
 #
 # == Parameters
 #
+# [*manage*]
+#   Whether to manage mysqldump with Puppet or not. Valid values are 'yes' 
+#   (default) and 'no'.
 # [*backups*]
 #   A hash of mysql::backup resources to realize.
 #
@@ -36,12 +39,12 @@
 #
 class mysqldump
 (
+    $manage = 'yes',
     $backups = {}
 )
 {
 
-# Rationale for this is explained in init.pp of the sshd module
-if hiera('manage_mysqldump', 'true') != 'false' {
+if $manage == 'yes' {
 
     # Realize the defined backup jobs
     create_resources('mysqldump::backup', $backups)
