@@ -18,8 +18,8 @@
 # == Parameters
 #
 # [*manage*]
-#   Whether to manage mysqldump with Puppet or not. Valid values are 'yes' 
-#   (default) and 'no'.
+#   Whether to manage mysqldump with Puppet or not. Valid values are true 
+#   (default) and false.
 # [*backups*]
 #   A hash of mysql::backup resources to realize.
 #
@@ -39,12 +39,12 @@
 #
 class mysqldump
 (
-    $manage = 'yes',
-    $backups = {}
+    Boolean $manage = true,
+    Hash    $backups = {}
 )
 {
 
-if $manage == 'yes' {
+if $manage {
 
     # Realize the defined backup jobs
     create_resources('mysqldump::backup', $backups)
