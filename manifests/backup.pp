@@ -36,12 +36,12 @@
 #   works for MyISAM tables. For InnoDB tables '--single-transaction' is more 
 #   appropriate.
 # [*hour*]
-#   Hour(s) when mysqldump gets run. String or Integer. Defaults to '01'.
+#   Hour(s) when mysqldump gets run. String or Integer or an array of them.
+#   Defaults to '01'.
 # [*minute*]
-#   Minute(s) when mysqldump gets run. String or Integer. Defaults to '10'.
+#   Minute(s) when mysqldump gets run. Defaults to '10'.
 # [*weekday*]
-#   Weekday(s) when mysqldump gets run. String or Integer. Defaults to '*' (all 
-#   weekdays).
+#   Weekday(s) when mysqldump gets run. Defaults to '*' (all weekdays).
 # [*email*]
 #   Email address where notifications are sent. Defaults to top-scope variable
 #   $::servermonitor.
@@ -57,17 +57,17 @@
 #
 define mysqldump::backup
 (
-    Enum['present','absent'] $ensure = 'present',
-    Variant[String, Array]   $databases = $title,
-    String                   $output_dir = '/var/backups/local',
-    Optional[String]         $mysql_user = 'root',
-    Optional[String]         $mysql_passwd = undef,
-    Boolean                  $use_root_defaults = false,
-    Optional[String]         $mysqldump_extra_params = '--lock-tables',
-    Variant[String, Integer] $hour = '01',
-    Variant[String, Integer] $minute = '10',
-    Variant[String, Integer] $weekday = '*',
-    String                   $email = $::servermonitor
+    Enum['present','absent']                                $ensure = 'present',
+    Variant[String, Array]                                  $databases = $title,
+    String                                                  $output_dir = '/var/backups/local',
+    Optional[String]                                        $mysql_user = 'root',
+    Optional[String]                                        $mysql_passwd = undef,
+    Boolean                                                 $use_root_defaults = false,
+    Optional[String]                                        $mysqldump_extra_params = '--lock-tables',
+    Variant[Array[String], Array[Integer], String, Integer] $hour = '01',
+    Variant[Array[String], Array[Integer], String, Integer] $minute = '10',
+    Variant[Array[String], Array[Integer], String, Integer] $weekday = '*',
+    String                                                  $email = $::servermonitor
 )
 {
     include ::mysqldump
