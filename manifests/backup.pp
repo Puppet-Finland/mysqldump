@@ -94,6 +94,9 @@ define mysqldump::backup
         $cron_command = "mysqldump ${auth_string} --routines --databases ${databases_string} ${mysqldump_extra_params}|gzip > \"${output_dir}/${databases_identifier}-full.sql.gz\""
     }
 
+    # Several other modules will attempt ensure that this same directory exists
+    ensure_resource('file', $output_dir, { 'ensure' => 'directory' })
+
     cron { "mysqldump-backup-${databases_identifier}-cron":
         ensure      => $ensure,
         command     => $cron_command,
@@ -101,7 +104,7 @@ define mysqldump::backup
         hour        => $hour,
         minute      => $minute,
         weekday     => $weekday,
-        require     => Class['localbackups'],
+        require     => File[$output_dir],
         environment => [ 'PATH=/bin:/usr/bin:/usr/local/bin', "MAILTO=${email}" ],
     }
 }
