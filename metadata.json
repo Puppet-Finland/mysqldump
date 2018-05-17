@@ -1,6 +1,6 @@
 {
   "name": "puppetfinland-mysqldump",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Puppet-Finland team",
   "summary": "Manage cronjobs for mysqldump-based backups",
   "license": "BSD-2-Clause",
