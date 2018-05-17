@@ -95,7 +95,7 @@ define mysqldump::backup
     }
 
     # Several other modules will attempt ensure that this same directory exists
-    ensure_resource('file', $output_dir, { 'ensure' => 'directory' })
+    include ::localbackups
 
     cron { "mysqldump-backup-${databases_identifier}-cron":
         ensure      => $ensure,
@@ -104,7 +104,7 @@ define mysqldump::backup
         hour        => $hour,
         minute      => $minute,
         weekday     => $weekday,
-        require     => File[$output_dir],
+        require     => Class['::localbackups'],
         environment => [ 'PATH=/bin:/usr/bin:/usr/local/bin', "MAILTO=${email}" ],
     }
 }
