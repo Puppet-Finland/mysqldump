@@ -1,24 +1,24 @@
 mysqldump
 =========
 
-A Puppet module for managing mysqldump and mysqldump backups
+A Puppet module for managing mysqldump and mysqldump-based cronified backups
 
 # Module usage
 
-* [Class: mysqldump](manifests/init.pp)
-* [Define: mysqldump::backup](manifests/backup.pp)
+Typical usage:
 
-# Dependencies
+    include ::mysqldump
+    
+    ::mysqldump::backup { 'daily':
+        mysql_user             => 'database_user,
+        mysql_passwd           => 'database_user_password',
+        databases              => [ 'database_name' ],
+        mysqldump_extra_params => '--lock-tables',
+        hour                   => '4',
+        minute                 => '50',
+        weekday                => '*',
+        email                  => 'monitor@example.org',
+    }
 
-See [metadata.json](metadata.json).
-
-# Operating system support
-
-This module has been tested on
-
-* Debian 7
-* Ubuntu 12.04
-* Ubuntu 14.04
-
-It should work on other *NIX operating systems either out of the box, or with 
-minor modifications.
+For details see [init.pp](manifests/init.pp) and 
+[backup.pp](manifests/backup.pp).
