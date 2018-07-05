@@ -57,17 +57,17 @@
 #
 define mysqldump::backup
 (
-    Enum['present','absent']                                $ensure = 'present',
-    Variant[String, Array]                                  $databases = $title,
-    String                                                  $output_dir = '/var/backups/local',
-    Optional[String]                                        $mysql_user = 'root',
-    Optional[String]                                        $mysql_passwd = undef,
-    Boolean                                                 $use_root_defaults = false,
-    Optional[String]                                        $mysqldump_extra_params = '--lock-tables',
-    Variant[Array[String], Array[Integer], String, Integer] $hour = '01',
-    Variant[Array[String], Array[Integer], String, Integer] $minute = '10',
-    Variant[Array[String], Array[Integer], String, Integer] $weekday = '*',
-    String                                                  $email = $::servermonitor
+    Enum['present','absent']                                            $ensure = 'present',
+    Variant[String, Array]                                              $databases = $title,
+    String                                                              $output_dir = '/var/backups/local',
+    Optional[String]                                                    $mysql_user = 'root',
+    Optional[String]                                                    $mysql_passwd = undef,
+    Boolean                                                             $use_root_defaults = false,
+    Optional[String]                                                    $mysqldump_extra_params = '--lock-tables',
+    Variant[Array[String], Array[Integer[0-23]], String, Integer[0-23]] $hour = '01',
+    Variant[Array[String], Array[Integer[0-59]], String, Integer[0-59]] $minute = '10',
+    Variant[Array[String], Array[Integer[0-7]],  String, Integer[0-7]]  $weekday = '*',
+    String                                                              $email = $::servermonitor
 )
 {
     include ::mysqldump
