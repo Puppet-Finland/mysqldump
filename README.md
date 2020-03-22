@@ -3,6 +3,11 @@ mysqldump
 
 A Puppet module for managing mysqldump and mysqldump-based cronified backups
 
+# Prerequisites
+
+You will have to ensure that the directory /var/backups/local is present before
+the cronjob runs. Otherwise you will get silent backup failures.
+
 # Module usage
 
 Typical usage:

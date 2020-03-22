@@ -6,9 +6,6 @@
 # application (e.g. rsnapshot or bacula) fetches the latest local backups at 
 # regular intervals and no local versioning is thus necessary.
 # 
-# This define depends on the 'localbackups' class. Also, the 'mysqldump' class 
-# has to be included or this define won't be found.
-#
 # == Parameters
 #
 # [*ensure*]
@@ -71,7 +68,6 @@ define mysqldump::backup
 )
 {
     include ::mysqldump
-    include ::mysqldump::params
 
     if $databases.is_array {
         # Get string representations of the database array
@@ -89,22 +85,18 @@ define mysqldump::backup
     }
 
     if $databases_string == 'all' {
-        $cron_command = "mysqldump ${auth_string} --routines --all-databases ${mysqldump_extra_params}|gzip > \"${output_dir}/all-databases-full.sql.gz\""
+        $cron_command = "mysqldump ${auth_string} --routines --all-databases ${mysqldump_extra_params}|gzip > \"${output_dir}/all-databases-full.sql.gz\"" # lint:ignore:140chars
     } else {
-        $cron_command = "mysqldump ${auth_string} --routines --databases ${databases_string} ${mysqldump_extra_params}|gzip > \"${output_dir}/${databases_identifier}-full.sql.gz\""
+        $cron_command = "mysqldump ${auth_string} --routines --databases ${databases_string} ${mysqldump_extra_params}|gzip > \"${output_dir}/${databases_identifier}-full.sql.gz\"" # lint:ignore:140chars
     }
-
-    # Several other modules will attempt ensure that this same directory exists
-    include ::localbackups
 
     cron { "mysqldump-backup-${databases_identifier}-cron":
         ensure      => $ensure,
         command     => $cron_command,
-        user        => $::os::params::adminuser,
+        user        => 'root',
         hour        => $hour,
         minute      => $minute,
         weekday     => $weekday,
-        require     => Class['::localbackups'],
         environment => [ 'PATH=/bin:/usr/bin:/usr/local/bin', "MAILTO=${email}" ],
     }
 }
